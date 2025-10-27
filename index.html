@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bajaj Auto Chakan 1 - Transport (PWA Mobile App Style)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+      font-family: 'Inter', sans-serif;
+    }
+    .table-scroll { overflow-x: auto; }
+    .shiftBtn:hover { transform: translateY(-2px); transition: 0.2s; }
+    .card { transition: 0.3s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+  </style>
+</head>
+<body class="min-h-screen text-gray-800">
+  <div class="max-w-4xl mx-auto p-4">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold text-gray-700">BAJAJ AUTO PLANT - 2 — TRANSPORT DEPARTMENT</h1>
+      <div class="space-x-2">
+        <span id="adminBadge" class="hidden px-2 py-1 rounded bg-green-100 text-green-800 text-sm">Admin</span>
+        <button id="loginBtn" class="px-3 py-1 rounded bg-blue-600 text-white text-sm">Admin Login</button>
+        <button id="logoutBtn" class="px-3 py-1 rounded bg-gray-200 text-sm hidden">Logout</button>
+      </div>
+    </header>
+
+    <!-- Shift Buttons -->
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 mb-6">
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="sunday1">Sunday – 1st Shift</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="sunday2">Sunday – 2nd Shift</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="sunday3">Sunday – 3rd Shift</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="nextweek1">Next Week – 1st Shift</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="nextweek2">Next Week – 2nd Shift</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="nextweek3">Next Week – 3rd Shift</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="ot">OT (Overtime)</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="vendor">Vendor Visit</button>
+    </div>
+     <!-- Important Links Section -->
+<section class="mt-8 bg-white shadow rounded p-4">
+  <h3 class="text-lg font-semibold text-gray-700 mb-3">📎 Important Links</h3>
+  <ul class="space-y-2 text-sm text-blue-700">
+    <li>
+      <a href="https://bronze-bess-68.tiiny.site/" target="_blank" class="hover:underline font-semibold text-red-600">
+        🚨 Emergency Contact
+      </a>
+    </li>
+    <li>
+      <a href="http://rb.gy/4gm0lr" target="_blank" class="hover:underline">
+        📘 SHE Marathi Policy
+      </a>
+    </li>
+    <li>
+      <a href="https://forms.office.com/r/Q5XH36JhnK" target="_blank" class="hover:underline">
+        🚌 Employee Bus Stop Change Form
+      </a>
+    </li>
+    <li>
+      <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=KZb8hzamA0yr6ads0KvrWcKirpXdJ35Gr_aShAmNg7ZURVo5UlM4WFVDWlpVNlBFTEtHVkpTQzZCMC4u" target="_blank" class="hover:underline">
+        🗣️ Employee Feedback Form
+      </a>
+    </li>
+    <li>
+      <a href="https://employee-transport.great-site.net/temp.php" target="_blank" class="hover:underline">
+        🧾 Vendor Visit Form
+      </a>
+    </li>
+  </ul>
+</section>
+
+    <!-- Selected shift title and Add Entry -->
+    <div class="flex items-center justify-between mb-4">
+      <h2 id="shiftTitle" class="text-lg font-semibold text-gray-700">Select a shift</h2>
+      <button id="addEntryBtn" class="hidden px-3 py-1 rounded bg-indigo-600 text-white text-sm">Add Entry</button>
+    </div>
+
+    <!-- Supervisor Card -->
+    <div id="supervisorArea" class="mb-4 p-4 bg-white rounded shadow hidden flex justify-between items-center">
+      <div>
+        <div class="text-sm text-gray-500"> Shift Supervisor</div>
+        <div id="supervisorText" class="font-medium"></div>
+      </div>
+      <a id="supervisorCall" href="#" class="px-3 py-1 rounded bg-green-600 text-white text-sm">Call</a>
+    </div>
+
+    <!-- Entries Table -->
+    <div id="listArea" class="bg-white rounded shadow p-2 table-scroll">
+      <table id="entriesTable" class="min-w-full text-left divide-y divide-gray-200 hidden">
+        <thead>
+          <tr class="text-sm text-gray-600">
+            <th class="px-2 py-2">Route No.</th>
+            <th class="px-2 py-2">Route Name</th>
+            <th class="px-2 py-2">Stops</th>
+            <th class="px-2 py-2">Driver</th>
+            <th class="px-2 py-2">Call</th>
+            <th class="px-2 py-2">Date</th>
+            <th class="px-2 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="entriesBody" class="text-sm"></tbody>
+      </table>
+      <p id="emptyMsg" class="text-center py-6 text-gray-500">No entries yet for this shift.</p>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center p-4">
+      <div class="bg-white rounded shadow-lg w-full max-w-lg p-4">
+        <h3 id="modalTitle" class="text-lg font-medium mb-2">Add Entry</h3>
+        <form id="entryForm" class="space-y-2">
+          <div class="grid grid-cols-2 gap-2">
+            <input required name="routeNo" placeholder="Route No." class="p-2 border rounded" />
+            <input required name="routeName" placeholder="Route Name" class="p-2 border rounded" />
+          </div>
+          <div>
+            <input name="stops" placeholder="Stops (comma separated)" class="p-2 border rounded w-full" />
+            <div class="text-xs text-gray-500 mt-1">Example: Stop 1, Stop 2, Stop 3</div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input name="driverName" placeholder="Driver Name" class="p-2 border rounded" />
+            <input name="driverPhone" placeholder="Driver Phone (+91...)" class="p-2 border rounded" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input name="date" type="date" class="p-2 border rounded" />
+            <input name="supervisorName" placeholder="Supervisor Name (optional)" class="p-2 border rounded" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input name="supervisorPhone" placeholder="Supervisor Phone (optional)" class="p-2 border rounded" />
+            <div></div>
+          </div>
+          <div class="flex justify-end space-x-2 mt-2">
+            <button type="button" id="cancelModal" class="px-3 py-1 rounded bg-gray-200">Cancel</button>
+            <button type="submit" class="px-3 py-1 rounded bg-indigo-600 text-white">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center p-4">
+      <div class="bg-white rounded shadow-lg w-full max-w-sm p-4">
+        <h3 class="text-lg font-medium mb-2">Admin Login</h3>
+        <form id="loginForm" class="space-y-2">
+          <input id="email" type="email" placeholder="Admin email" class="p-2 border rounded w-full" required />
+          <input id="password" type="password" placeholder="Password" class="p-2 border rounded w-full" required />
+          <div class="flex justify-end space-x-2">
+            <button type="button" id="cancelLogin" class="px-3 py-1 rounded bg-gray-200">Cancel</button>
+            <button type="submit" class="px-3 py-1 rounded bg-blue-600 text-white">Login</button>
+          </div>
+        </form>
+        <div class="text-xs text-gray-500 mt-2">
+          ⚠️ Make sure your admin user is created in Firebase Console → Authentication → Users
+        </div>
+      </div>
+    </div>
+
+    <footer class="mt-6 text-xs text-gray-500 text-center">Made for Bajaj Auto Chakan 1 — Mobile friendly • Real-time updates</footer>
+  </div>
+
+  <!-- Firebase SDK v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <script>
+    // ----------------- FIREBASE CONFIG -----------------
+    const firebaseConfig = {
+ apiKey: "AIzaSyBXFHsKTI_PRWL6_pS-DvpKOpq-yIb5wWY",
+  authDomain: "studio-9092233210-12a76.firebaseapp.com",
+  databaseURL: "https://studio-9092233210-12a76-default-rtdb.firebaseio.com",
+  projectId: "studio-9092233210-12a76",
+  storageBucket: "studio-9092233210-12a76.firebasestorage.app",
+  messagingSenderId: "398147415153",
+  appId: "1:398147415153:web:8fe4318dbc789e03bd7fd0"
+    };
+    const ADMIN_EMAIL = "vschobhe@bajajauto.co.in"; // <-- Replace with your real admin email
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    // ----------------- SECURITY RULE INSTRUCTIONS -----------------
+    /*
+    In Firebase Console → Realtime Database → Rules, use:
+    {
+      "rules": {
+        "shifts": {
+          ".read": true,
+          ".write": "auth != null && auth.token.email == 'bajajadmin@gmail.com'"
+        },
+        ".read": true,
+        ".write": false
+      }
+    }
+    ⚠️ This allows only your admin account to modify data. Everyone else can read.
+    */
+
+    // ----------------- APP LOGIC -----------------
+    const shiftButtons = document.querySelectorAll('.shiftBtn');
+    const shiftTitle = document.getElementById('shiftTitle');
+    const addEntryBtn = document.getElementById('addEntryBtn');
+    const entriesTable = document.getElementById('entriesTable');
+    const entriesBody = document.getElementById('entriesBody');
+    const emptyMsg = document.getElementById('emptyMsg');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const entryForm = document.getElementById('entryForm');
+    const cancelModal = document.getElementById('cancelModal');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginModal = document.getElementById('loginModal');
+    const cancelLogin = document.getElementById('cancelLogin');
+    const loginForm = document.getElementById('loginForm');
+    const adminBadge = document.getElementById('adminBadge');
+    const supervisorArea = document.getElementById('supervisorArea');
+    const supervisorText = document.getElementById('supervisorText');
+    const supervisorCall = document.getElementById('supervisorCall');
+
+    let currentShift = null;
+    let currentEntries = {};
+    let editingId = null;
+
+    function telLink(phone) { return phone ? 'tel:' + phone.replace(/\s+/g, '') : '#'; }
+    function isAdmin() { const user = auth.currentUser; return user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase(); }
+
+    // ----------------- SHIFT SELECTION -----------------
+    shiftButtons.forEach(btn => btn.addEventListener('click', () => {
+      const shift = btn.dataset.shift;
+      currentShift = shift;
+      shiftTitle.textContent = {
+        sunday1:'Sunday – 1st Shift', sunday2:'Sunday – 2nd Shift', sunday3:'Sunday – 3rd Shift',
+        nextweek1:'Next Week – 1st Shift', nextweek2:'Next Week – 2nd Shift', nextweek3:'Next Week – 3rd Shift',
+        ot:'OT (Overtime)', vendor:'Vendor Visit'
+      }[shift] || shift;
+
+      db.ref('shifts/' + shift + '/supervisor').on('value', snap => {
+        const sup = snap.val();
+        if(sup && (sup.name || sup.phone)) {
+          supervisorArea.classList.remove('hidden');
+          supervisorText.textContent = (sup.name||'') + (sup.phone ? ' • '+sup.phone:'');
+          supervisorCall.href = telLink(sup.phone||'');
+        } else supervisorArea.classList.add('hidden');
+      });
+
+      db.ref('shifts/' + shift + '/entries').on('value', snap => {
+        const data = snap.val() || {};
+        currentEntries = data;
+        renderEntriesTable(data);
+      });
+
+      entriesTable.classList.remove('hidden');
+      emptyMsg.classList.add('hidden');
+    }));
+
+    function renderEntriesTable(data){
+      entriesBody.innerHTML = '';
+      const keys = Object.keys(data||{});
+      if(!keys.length){ entriesTable.classList.add('hidden'); emptyMsg.classList.remove('hidden'); return; }
+      entriesTable.classList.remove('hidden'); emptyMsg.classList.add('hidden');
+
+      keys.sort((a,b)=>((Number(data[a].routeNo)||0) - (Number(data[b].routeNo)||0))).forEach(id=>{
+        const e = data[id];
+        const tr = document.createElement('tr');
+        tr.className = 'border-b';
+        tr.innerHTML = `
+          <td class="px-2 py-2 align-top">${e.routeNo||''}</td>
+          <td class="px-2 py-2 align-top">${e.routeName||''}</td>
+          <td class="px-2 py-2 align-top">${(e.stops||[]).join('<br>')}</td>
+          <td class="px-2 py-2 align-top">${e.driverName||''}</td>
+          <td class="px-2 py-2 align-top"><a href="${telLink(e.driverPhone||'')}" class="px-2 py-1 inline-block rounded bg-green-600 text-white text-xs">Call</a></td>
+          <td class="px-2 py-2 align-top">${e.date||''}</td>
+          <td class="px-2 py-2 align-top">${isAdmin()?`<button data-id="${id}" class="editBtn px-2 py-1 rounded bg-yellow-400 text-xs mr-1">Edit</button><button data-id="${id}" class="delBtn px-2 py-1 rounded bg-red-500 text-xs text-white">Delete</button>`:'<span class="text-xs text-gray-500">—</span>'}</td>
+        `;
+        entriesBody.appendChild(tr);
+      });
+
+      document.querySelectorAll('.editBtn').forEach(b=>b.addEventListener('click',()=>openEdit(b.dataset.id)));
+      document.querySelectorAll('.delBtn').forEach(b=>b.addEventListener('click',()=>deleteEntry(b.dataset.id)));
+    }
+
+    function openEdit(id){
+      const e = currentEntries[id]||{};
+      editingId = id;
+      modalTitle.textContent='Edit Entry';
+      entryForm.routeNo.value=e.routeNo||'';
+      entryForm.routeName.value=e.routeName||'';
+      entryForm.stops.value=(e.stops||[]).join(', ');
+      entryForm.driverName.value=e.driverName||'';
+      entryForm.driverPhone.value=e.driverPhone||'';
+      entryForm.date.value=e.date||'';
+      modal.classList.remove('hidden'); modal.style.display='flex';
+    }
+
+    function deleteEntry(id){
+      if(confirm('Delete this entry?')) db.ref('shifts/'+currentShift+'/entries/'+id).remove();
+    }
+
+    addEntryBtn.addEventListener('click',()=>{ editingId=null; modalTitle.textContent='Add Entry'; entryForm.reset(); modal.classList.remove('hidden'); modal.style.display='flex'; });
+    cancelModal.addEventListener('click',()=>{ modal.classList.add('hidden'); modal.style.display='none'; });
+
+    entryForm.addEventListener('submit',e=>{
+      e.preventDefault(); if(!currentShift) return alert('Select a shift first');
+      const fd = new FormData(entryForm);
+      const obj = {
+        routeNo: fd.get('routeNo')||'',
+        routeName: fd.get('routeName')||'',
+        stops: (fd.get('stops')||'').split(',').map(s=>s.trim()).filter(Boolean),
+        driverName: fd.get('driverName')||'',
+        driverPhone: fd.get('driverPhone')||'',
+        date: fd.get('date')||''
+      };
+      const supName = fd.get('supervisorName')||'';
+      const supPhone = fd.get('supervisorPhone')||'';
+      const updates = {};
+      if(supName || supPhone) updates['shifts/'+currentShift+'/supervisor']={name:supName,phone:supPhone};
+      if(editingId) updates['shifts/'+currentShift+'/entries/'+editingId]=obj;
+      else { const newKey=db.ref().child('shifts').push().key; updates['shifts/'+currentShift+'/entries/'+newKey]=obj; }
+      db.ref().update(updates).then(()=>{ modal.classList.add('hidden'); modal.style.display='none'; }).catch(err=>alert('Save failed: '+err.message));
+    });
+
+    loginBtn.addEventListener('click',()=>{ loginModal.classList.remove('hidden'); loginModal.style.display='flex'; });
+    cancelLogin.addEventListener('click',()=>{ loginModal.classList.add('hidden'); loginModal.style.display='none'; });
+
+    loginForm.addEventListener('submit',e=>{
+      e.preventDefault();
+      const email=document.getElementById('email').value;
+      const password=document.getElementById('password').value;
+      auth.signInWithEmailAndPassword(email,password).then(()=>{ loginModal.classList.add('hidden'); loginModal.style.display='none'; }).catch(err=>alert('Login failed: '+err.message));
+    });
+
+    logoutBtn.addEventListener('click',()=>{ auth.signOut(); });
+
+    auth.onAuthStateChanged(user=>{
+      if(user && isAdmin()){ adminBadge.classList.remove('hidden'); addEntryBtn.classList.remove('hidden'); loginBtn.classList.add('hidden'); logoutBtn.classList.remove('hidden'); }
+      else{ adminBadge.classList.add('hidden'); addEntryBtn.classList.add('hidden'); loginBtn.classList.remove('hidden'); logoutBtn.classList.add('hidden'); }
+    });
+
+    // Auto-select first shift
+    (function(){ const first = document.querySelector('.shiftBtn'); if(first) first.click(); })();
+  </script>
+</body>
+</html>
