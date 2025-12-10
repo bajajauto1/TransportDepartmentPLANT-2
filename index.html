@@ -15,20 +15,61 @@
     .shiftBtn:hover { transform: translateY(-2px); transition: 0.2s; }
     .card { transition: 0.3s; }
     .card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+
+    .activeShift {
+    background: #2563eb !important;
+    color: white !important;
+    transform: scale(1.02);
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
+}
+
+.blurOther {
+    filter: blur(1px);     /* ← LIGHT BLUR */
+    opacity: 0.7;          /* Slight dim effect */
+    transition: 0.3s;
+}
+
+
+.shift-sunday1 { background: rgba(255, 180, 180, 0.35); backdrop-filter: blur(6px); }
+.shift-sunday2 { background: rgba(255, 220, 150, 0.35); backdrop-filter: blur(6px); }
+.shift-sunday3 { background: rgba(255, 255, 150, 0.35); backdrop-filter: blur(6px); }
+
+.shift-nextweek1 { background: rgba(180, 255, 200, 0.35); backdrop-filter: blur(6px); }
+.shift-nextweek2 { background: rgba(150, 210, 255, 0.35); backdrop-filter: blur(6px); }
+.shift-nextweek3 { background: rgba(200, 180, 255, 0.35); backdrop-filter: blur(6px); }
+
+.shift-ot { background: rgba(255, 140, 255, 0.35); backdrop-filter: blur(6px); }
+.shift-vendor { background: rgba(180, 255, 255, 0.35); backdrop-filter: blur(6px); }
+
+.shift-selected {
+    border: 2px solid white;
+    scale: 1.02;
+    transition: 0.2s;
+}
+
   </style>
 </head>
 <body class="min-h-screen text-gray-800">
   <div class="max-w-4xl mx-auto p-4">
 
     <!-- Header -->
-    <header class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold text-gray-700">BAJAJ AUTO PLANT - 2 — TRANSPORT DEPARTMENT</h1>
-      <div class="space-x-2">
-        <span id="adminBadge" class="hidden px-2 py-1 rounded bg-green-100 text-green-800 text-sm">Admin</span>
-        <button id="loginBtn" class="px-3 py-1 rounded bg-blue-600 text-white text-sm">Admin Login</button>
-        <button id="logoutBtn" class="px-3 py-1 rounded bg-gray-200 text-sm hidden">Logout</button>
-      </div>
-    </header>
+     <header class="flex items-center justify-between mb-6">
+
+  <!-- LOGO -->
+  <img src="download (1).png" alt="Bajaj Auto Logo" class="h-12 w-auto">
+
+  <!-- Title -->
+  <h1 class="text-2xl font-bold text-gray-700 text-right">
+    PLANT-2
+  </h1>
+
+  <div class="space-x-2">
+    <span id="adminBadge" class="hidden px-2 py-1 rounded bg-green-100 text-green-800 text-sm">Admin</span>
+    <button id="loginBtn" class="px-3 py-1 rounded bg-blue-600 text-white text-sm">Admin Login</button>
+    <button id="logoutBtn" class="px-3 py-1 rounded bg-gray-200 text-sm hidden">Logout</button>
+  </div>
+
+</header>
 
     <!-- Shift Buttons -->
     <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 mb-6">
@@ -41,12 +82,12 @@
       <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="ot">OT (Overtime)</button>
       <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="vendor">Vendor Visit</button>
     </div>
-     <!-- Important Links Section -->
+    <!-- Important Links Section -->
 <section class="mt-8 bg-white shadow rounded p-4">
   <h3 class="text-lg font-semibold text-gray-700 mb-3">📎 Important Links</h3>
   <ul class="space-y-2 text-sm text-blue-700">
     <li>
-      <a href="https://bronze-bess-68.tiiny.site/" target="_blank" class="hover:underline font-semibold text-red-600">
+      <a href="https://bajajauto1.github.io/EmergencyContacts/" target="_blank" class="hover:underline font-semibold text-red-600">
         🚨 Emergency Contact
       </a>
     </li>
@@ -57,21 +98,21 @@
     </li>
            <li>
       <a href="http://qrco.de/bgQ34j" target="_blank" class="hover:underline">
-        📘 VENDER VISIT/SHUTTLE BUS TIMINGS
+        📘 VENDOR VISIT/SHUTTLE BUS TIMINGS
       </a>
     </li>
     <li>
-      <a href="https://forms.office.com/r/Q5XH36JhnK" target="_blank" class="hover:underline">
+      <a href="https://forms.office.com/r/b3FyvU9L8v" target="_blank" class="hover:underline">
         🚌 Employee Bus Stop Change Form
       </a>
     </li>
     <li>
-      <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=KZb8hzamA0yr6ads0KvrWcKirpXdJ35Gr_aShAmNg7ZURVo5UlM4WFVDWlpVNlBFTEtHVkpTQzZCMC4u" target="_blank" class="hover:underline">
+      <a href="https://forms.office.com/r/RXLpQ4jevZ?origin=QRCode&qrcodeorigin=presentation" target="_blank" class="hover:underline">
         🗣️ Employee Feedback Form
       </a>
     </li>
      <li>
-      <a href="https://bajajauto1.github.io/BajajAutoOnlinePass/" target="_blank" class="hover:underline">
+      <a href="https://bajajauto1.github.io/buspassonline/" target="_blank" class="hover:underline">
         🚌 Download Buss Pass Online
       </a>
     </li>
@@ -167,7 +208,7 @@
         </div>
       </div>
     </div>
-
+        
     <footer class="mt-6 text-xs text-gray-500 text-center">Made for Bajaj Auto Chakan 1 — Mobile friendly • Real-time updates</footer>
   </div>
 
@@ -179,7 +220,7 @@
   <script>
     // ----------------- FIREBASE CONFIG -----------------
     const firebaseConfig = {
- apiKey: "AIzaSyBXFHsKTI_PRWL6_pS-DvpKOpq-yIb5wWY",
+    apiKey: "AIzaSyBXFHsKTI_PRWL6_pS-DvpKOpq-yIb5wWY",
   authDomain: "studio-9092233210-12a76.firebaseapp.com",
   databaseURL: "https://studio-9092233210-12a76-default-rtdb.firebaseio.com",
   projectId: "studio-9092233210-12a76",
@@ -187,7 +228,7 @@
   messagingSenderId: "398147415153",
   appId: "1:398147415153:web:8fe4318dbc789e03bd7fd0"
     };
-    const ADMIN_EMAIL = "vschobhe@bajajauto.co.in"; // <-- Replace with your real admin email
+    const ADMIN_EMAIL = "mr.vishnu4312@gmail.com"; // <-- Replace with your real admin email
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -238,33 +279,55 @@
     function isAdmin() { const user = auth.currentUser; return user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase(); }
 
     // ----------------- SHIFT SELECTION -----------------
-    shiftButtons.forEach(btn => btn.addEventListener('click', () => {
-      const shift = btn.dataset.shift;
-      currentShift = shift;
-      shiftTitle.textContent = {
-        sunday1:'Sunday – 1st Shift', sunday2:'Sunday – 2nd Shift', sunday3:'Sunday – 3rd Shift',
-        nextweek1:'Next Week – 1st Shift', nextweek2:'Next Week – 2nd Shift', nextweek3:'Next Week – 3rd Shift',
-        ot:'OT (Overtime)', vendor:'Vendor Visit'
-      }[shift] || shift;
+  shiftButtons.forEach(btn => btn.addEventListener('click', () => {
 
-      db.ref('shifts/' + shift + '/supervisor').on('value', snap => {
-        const sup = snap.val();
-        if(sup && (sup.name || sup.phone)) {
-          supervisorArea.classList.remove('hidden');
-          supervisorText.textContent = (sup.name||'') + (sup.phone ? ' • '+sup.phone:'');
-          supervisorCall.href = telLink(sup.phone||'');
-        } else supervisorArea.classList.add('hidden');
-      });
+  // Remove active + blur from all
+   shiftButtons.forEach(b => {
+      b.classList.remove('activeShift');
+      b.classList.remove('blurOther');
+      b.classList.remove(
+        'shift-sunday1','shift-sunday2','shift-sunday3',
+        'shift-nextweek1','shift-nextweek2','shift-nextweek3',
+        'shift-ot','shift-vendor'
+      );
+  });
 
-      db.ref('shifts/' + shift + '/entries').on('value', snap => {
-        const data = snap.val() || {};
-        currentEntries = data;
-        renderEntriesTable(data);
-      });
+  // Add active class
+  btn.classList.add('activeShift');
+  btn.classList.add('shift-' + btn.dataset.shift);  // ← APPLY SPECIFIC COLOR
 
-      entriesTable.classList.remove('hidden');
-      emptyMsg.classList.add('hidden');
-    }));
+  // Blur others
+  shiftButtons.forEach(b => {
+      if (b !== btn) b.classList.add('blurOther');
+  });
+
+  // Continue your existing code
+  const shift = btn.dataset.shift;
+  currentShift = shift;
+  shiftTitle.textContent = {
+    sunday1:'Sunday – 1st Shift', sunday2:'Sunday – 2nd Shift', sunday3:'Sunday – 3rd Shift',
+    nextweek1:'Next Week – 1st Shift', nextweek2:'Next Week – 2nd Shift', nextweek3:'Next Week – 3rd Shift',
+    ot:'OT (Overtime)', vendor:'Vendor Visit'
+  }[shift] || shift;
+
+  db.ref('shifts/' + shift + '/supervisor').on('value', snap => {
+    const sup = snap.val();
+    if(sup && (sup.name || sup.phone)) {
+      supervisorArea.classList.remove('hidden');
+      supervisorText.textContent = (sup.name||'') + (sup.phone ? ' • '+sup.phone:'' );
+      supervisorCall.href = telLink(sup.phone||'');
+    } else supervisorArea.classList.add('hidden');
+  });
+
+  db.ref('shifts/' + shift + '/entries').on('value', snap => {
+    const data = snap.val() || {};
+    currentEntries = data;
+    renderEntriesTable(data);
+  });
+
+  entriesTable.classList.remove('hidden');
+  emptyMsg.classList.add('hidden');
+}));
 
     function renderEntriesTable(data){
       entriesBody.innerHTML = '';
@@ -351,9 +414,11 @@
 
     // Auto-select first shift
     (function(){ const first = document.querySelector('.shiftBtn'); if(first) first.click(); })();
+    
   </script>
+
+  
+  
 </body>
 
 </html>
-
-
