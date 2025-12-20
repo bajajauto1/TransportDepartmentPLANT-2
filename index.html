@@ -2,230 +2,189 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bajaj Auto Chakan 1 - Transport (PWA Mobile App Style)</title>
-  <!-- Tailwind CSS CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bajaj Auto Chakan 1 - Transport</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+      background: #f3f4f6;
       font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-    .table-scroll { overflow-x: auto; }
-    .shiftBtn:hover { transform: translateY(-2px); transition: 0.2s; }
-    .card { transition: 0.3s; }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+    
+    /* Custom Scrollbar for better UI */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+    /* Shift Button Styling */
+    .shift-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    
+    .shiftBtn {
+      border: 1px solid #e5e7eb;
+      transition: all 0.2s ease;
+    }
 
     .activeShift {
-    background: #2563eb !important;
-    color: white !important;
-    transform: scale(1.02);
-    box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
-}
+      background: #2563eb !important;
+      color: white !important;
+      border-color: #1d4ed8;
+      transform: scale(0.98);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-.blurOther {
-    filter: blur(1px);     /* ← LIGHT BLUR */
-    opacity: 0.7;          /* Slight dim effect */
-    transition: 0.3s;
-}
+    .blurOther { opacity: 0.5; filter: grayscale(0.5); }
 
+    /* Card Styling */
+    .entry-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border: 1px solid #edf2f7;
+    }
 
-.shift-sunday1 { background: rgba(255, 180, 180, 0.35); backdrop-filter: blur(6px); }
-.shift-sunday2 { background: rgba(255, 220, 150, 0.35); backdrop-filter: blur(6px); }
-.shift-sunday3 { background: rgba(255, 255, 150, 0.35); backdrop-filter: blur(6px); }
-
-.shift-nextweek1 { background: rgba(180, 255, 200, 0.35); backdrop-filter: blur(6px); }
-.shift-nextweek2 { background: rgba(150, 210, 255, 0.35); backdrop-filter: blur(6px); }
-.shift-nextweek3 { background: rgba(200, 180, 255, 0.35); backdrop-filter: blur(6px); }
-
-.shift-ot { background: rgba(255, 140, 255, 0.35); backdrop-filter: blur(6px); }
-.shift-vendor { background: rgba(180, 255, 255, 0.35); backdrop-filter: blur(6px); }
-
-.shift-selected {
-    border: 2px solid white;
-    scale: 1.02;
-    transition: 0.2s;
-}
-
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    }
+    
+    /* Modal Transition */
+    .modal-active { display: flex !important; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
-<body class="min-h-screen text-gray-800">
-  <div class="max-w-4xl mx-auto p-4">
+<body class="pb-24">
 
-    <!-- Header -->
-     <header class="flex items-center justify-between mb-6">
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <img src="download (1).png" alt="Logo" class="h-8 w-auto">
+      <span class="font-bold text-blue-900 tracking-tight">PLANT-2</span>
+    </div>
+    <div class="flex items-center space-x-2">
+      <span id="adminBadge" class="hidden px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase">Admin</span>
+      <button id="loginBtn" class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">Login</button>
+      <button id="logoutBtn" class="hidden text-xs font-semibold text-red-600 bg-red-50 px-3 py-1.5 rounded-lg">Logout</button>
+    </div>
+  </header>
 
-  <!-- LOGO -->
-  <img src="download (1).png" alt="Bajaj Auto Logo" class="h-12 w-auto">
+  <div class="max-w-md mx-auto p-4">
 
-  <!-- Title -->
-  <h1 class="text-2xl font-bold text-gray-700 text-right">
-    PLANT-2
-  </h1>
-
-  <div class="space-x-2">
-    <span id="adminBadge" class="hidden px-2 py-1 rounded bg-green-100 text-green-800 text-sm">Admin</span>
-    <button id="loginBtn" class="px-3 py-1 rounded bg-blue-600 text-white text-sm">Admin Login</button>
-    <button id="logoutBtn" class="px-3 py-1 rounded bg-gray-200 text-sm hidden">Logout</button>
-  </div>
-
-</header>
-
-    <!-- Shift Buttons -->
-    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 mb-6">
-      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="sunday1">Sunday – 1st Shift</button>
-      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="sunday2">Sunday – 2nd Shift</button>
-      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="sunday3">Sunday – 3rd Shift</button>
-      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="nextweek1">Next Week – 1st Shift</button>
+    <div class="shift-grid mb-6">
+      <button class="shiftBtn card px-3 py-2.5 rounded-xl bg-white text-xs font-semibold" data-shift="sunday1">Sun - 1st</button>
+      <button class="shiftBtn card px-3 py-2.5 rounded-xl bg-white text-xs font-semibold" data-shift="sunday2">Sun - 2nd</button>
+      <button class="shiftBtn card px-3 py-2.5 rounded-xl bg-white text-xs font-semibold" data-shift="sunday3">Sun - 3rd</button>
+      <button class="shiftBtn card px-3 py-2.5 rounded-xl bg-white text-xs font-semibold" data-shift="nextweek1">NextW - 1st</button>
       <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="nextweek2">Next Week – 2nd Shift</button>
-      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="nextweek3">Next Week – 3rd Shift</button>
-      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="ot">OT (Overtime)</button>
-      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="vendor">Vendor Visit</button>
-    </div>
-    <!-- Important Links Section -->
-<section class="mt-8 bg-white shadow rounded p-4">
-  <h3 class="text-lg font-semibold text-gray-700 mb-3">📎 Important Links</h3>
-  <ul class="space-y-2 text-sm text-blue-700">
-    <li>
-      <a href="https://bajajauto1.github.io/EmergencyContacts/" target="_blank" class="hover:underline font-semibold text-red-600">
-        🚨 Emergency Contact
-      </a>
-    </li>
-    <li>
-      <a href="http://rb.gy/4gm0lr" target="_blank" class="hover:underline">
-        📘 SHE Marathi Policy
-      </a>
-    </li>
-           <li>
-      <a href="http://qrco.de/bgQ34j" target="_blank" class="hover:underline">
-        📘 VENDOR VISIT/SHUTTLE BUS TIMINGS
-      </a>
-    </li>
-    <li>
-      <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=KZb8hzamA0yr6ads0KvrWcKirpXdJ35Gr_aShAmNg7ZUQzFVT1hCSDQ0TVZEM0hGMEIxTVQxMENJWi4u" target="_blank" class="hover:underline">
-        📘 BAJAJ AUTO CHAKAN SUPPORT SERVICES
-      </a>
-    </li>
-    <li>
-      <a href="https://forms.office.com/r/b3FyvU9L8v" target="_blank" class="hover:underline">
-        🚌 Employee Bus Stop Change Form
-      </a>
-    </li>
-    <li>
-      <a href="https://forms.office.com/r/RXLpQ4jevZ?origin=QRCode&qrcodeorigin=presentation" target="_blank" class="hover:underline">
-        🗣️ Employee Feedback Form
-      </a>
-    </li>
-     <li>
-      <a href="https://bajajauto1.github.io/BajajAutoOnlinePass/" target="_blank" class="hover:underline">
-        🚌 Download Buss Pass Online
-      </a>
-    </li>
-    <li>
-      <a href="https://employee-transport.great-site.net/temp.php" target="_blank" class="hover:underline">
-        🧾 Vendor Visit Form
-      </a>
-    </li>
-  </ul>
-</section>
-
-    <!-- Selected shift title and Add Entry -->
-    <div class="flex items-center justify-between mb-4">
-      <h2 id="shiftTitle" class="text-lg font-semibold text-gray-700">Select a shift</h2>
-      <button id="addEntryBtn" class="hidden px-3 py-1 rounded bg-indigo-600 text-white text-sm">Add Entry</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="nextweek3">Next Week – 3rd Shift</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="ot">OT (Overtime)</button>
+      <button class="shiftBtn card px-4 py-3 rounded bg-white shadow text-left" data-shift="vendor">Vendor Visit</button>
     </div>
 
-    <!-- Supervisor Card -->
-    <div id="supervisorArea" class="mb-4 p-4 bg-white rounded shadow hidden flex justify-between items-center">
-      <div>
-        <div class="text-sm text-gray-500"> Shift Supervisor</div>
-        <div id="supervisorText" class="font-medium"></div>
-      </div>
-      <a id="supervisorCall" href="#" class="px-3 py-1 rounded bg-green-600 text-white text-sm">Call</a>
-    </div>
-
-    <!-- Entries Table -->
-    <div id="listArea" class="bg-white rounded shadow p-2 table-scroll">
-      <table id="entriesTable" class="min-w-full text-left divide-y divide-gray-200 hidden">
-        <thead>
-          <tr class="text-sm text-gray-600">
-            <th class="px-2 py-2">Route No.</th>
-            <th class="px-2 py-2">Route Name</th>
-            <th class="px-2 py-2">Stops</th>
-            <th class="px-2 py-2">Driver</th>
-            <th class="px-2 py-2">Call</th>
-            <th class="px-2 py-2">Date</th>
-            <th class="px-2 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="entriesBody" class="text-sm"></tbody>
-      </table>
-      <p id="emptyMsg" class="text-center py-6 text-gray-500">No entries yet for this shift.</p>
-    </div>
-
-    <!-- Admin Modal -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center p-4">
-      <div class="bg-white rounded shadow-lg w-full max-w-lg p-4">
-        <h3 id="modalTitle" class="text-lg font-medium mb-2">Add Entry</h3>
-        <form id="entryForm" class="space-y-2">
-          <div class="grid grid-cols-2 gap-2">
-            <input required name="routeNo" placeholder="Route No." class="p-2 border rounded" />
-            <input required name="routeName" placeholder="Route Name" class="p-2 border rounded" />
-          </div>
-          <div>
-            <input name="stops" placeholder="Stops (comma separated)" class="p-2 border rounded w-full" />
-            <div class="text-xs text-gray-500 mt-1">Example: Stop 1, Stop 2, Stop 3</div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input name="driverName" placeholder="Driver Name" class="p-2 border rounded" />
-            <input name="driverPhone" placeholder="Driver Phone (+91...)" class="p-2 border rounded" />
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input name="date" type="date" class="p-2 border rounded" />
-            <input name="supervisorName" placeholder="Supervisor Name (optional)" class="p-2 border rounded" />
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input name="supervisorPhone" placeholder="Supervisor Phone (optional)" class="p-2 border rounded" />
-            <div></div>
-          </div>
-          <div class="flex justify-end space-x-2 mt-2">
-            <button type="button" id="cancelModal" class="px-3 py-1 rounded bg-gray-200">Cancel</button>
-            <button type="submit" class="px-3 py-1 rounded bg-indigo-600 text-white">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center p-4">
-      <div class="bg-white rounded shadow-lg w-full max-w-sm p-4">
-        <h3 class="text-lg font-medium mb-2">Admin Login</h3>
-        <form id="loginForm" class="space-y-2">
-          <input id="email" type="email" placeholder="Admin email" class="p-2 border rounded w-full" required />
-          <input id="password" type="password" placeholder="Password" class="p-2 border rounded w-full" required />
-          <div class="flex justify-end space-x-2">
-            <button type="button" id="cancelLogin" class="px-3 py-1 rounded bg-gray-200">Cancel</button>
-            <button type="submit" class="px-3 py-1 rounded bg-blue-600 text-white">Login</button>
-          </div>
-        </form>
-        <div class="text-xs text-gray-500 mt-2">
-          ⚠️ Make sure your admin user is created in Firebase Console → Authentication → Users
+    <details class="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <summary class="p-4 font-bold text-gray-700 cursor-pointer list-none flex justify-between items-center">
+            <span>📎 Important Links</span>
+            <span class="text-gray-400 text-xs">View All</span>
+        </summary>
+        <div class="p-4 pt-0 grid grid-cols-1 gap-2 border-t">
+            <a href="https://bajajauto1.github.io/EmergencyContacts/" class="flex items-center p-2 text-sm text-red-600 font-bold bg-red-50 rounded-lg">🚨 Emergency Contact</a>
+             <a href="http://rb.gy/4gm0lr" target="_blank" class="hover:underline" class="flex items-center p-2 text-sm text-red-600 font-bold bg-red-50 rounded-lg">📘 SHE Marathi Policy</a>
+              <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=KZb8hzamA0yr6ads0KvrWcKirpXdJ35Gr_aShAmNg7ZUQzFVT1hCSDQ0TVZEM0hGMEIxTVQxMENJWi4u" class="flex items-center p-2 text-sm text-red-600 font-bold bg-red-50 rounded-lg">📘 BAJAJ AUTO CHAKAN SUPPORT SERVICES</a>
+               <a href="https://forms.office.com/r/b3FyvU9L8v" class="flex items-center p-2 text-sm text-red-600 font-bold bg-red-50 rounded-lg">📘Employee Bus Stop Change Form</a>
+           
+           
+         <a href="https://employee-transport.great-site.net/temp.php" class="flex items-center p-2 text-sm text-blue-700 bg-blue-50 rounded-lg">🧾 Vendor Visit Form</a>
+            <a href="https://bajajauto1.github.io/BajajAutoOnlinePass/" class="flex items-center p-2 text-sm text-blue-700 bg-blue-50 rounded-lg">🚌 Download Bus Pass</a>
+            <a href="https://forms.office.com/r/RXLpQ4jevZ?origin=QRCode&qrcodeorigin=presentation" class="flex items-center p-2 text-sm text-gray-700 bg-gray-50 rounded-lg">🗣️ Employee Feedback Form</a>
         </div>
+    </details>
+
+    <h2 id="shiftTitle" class="text-xl font-bold text-gray-800 mb-4 px-1">Select Shift</h2>
+
+    <div id="supervisorArea" class="hidden mb-6 p-4 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-lg text-white flex justify-between items-center">
+      <div>
+        <div class="text-[10px] uppercase tracking-wider opacity-80">Shift Supervisor</div>
+        <div id="supervisorText" class="font-bold text-lg leading-tight"></div>
+      </div>
+      <a id="supervisorCall" href="#" class="h-12 w-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+      </a>
+    </div>
+
+    <div id="listArea">
+      <div id="entriesBody" class="space-y-3"></div>
+      <div id="emptyMsg" class="text-center py-12">
+        <div class="text-gray-300 mb-2">📭</div>
+        <p class="text-gray-500 text-sm">No entries found for this shift.</p>
       </div>
     </div>
-        
-    <footer class="mt-6 text-xs text-gray-500 text-center">Made for Bajaj Auto Chakan 1 — Mobile friendly • Real-time updates</footer>
   </div>
 
-  <!-- Firebase SDK v8 -->
+  <button id="addEntryBtn" class="hidden fab h-14 w-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xl active:scale-90 transition-transform">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+  </button>
+
+  <div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 items-end sm:items-center justify-center">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md p-6 shadow-2xl animate-slide-up">
+      <h3 id="modalTitle" class="text-xl font-bold mb-4">Add Entry</h3>
+      <form id="entryForm" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <input required name="routeNo" placeholder="Route No." class="p-3 bg-gray-50 border rounded-xl w-full text-sm" />
+          <input required name="routeName" placeholder="Route Name" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" />
+        </div>
+        <input name="stops" placeholder="Stops (Stop A, Stop B...)" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" />
+        <div class="grid grid-cols-2 gap-3">
+          <input name="driverName" placeholder="Driver Name" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" />
+          <input name="driverPhone" type="tel" placeholder="Driver Phone" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <input name="date" type="date" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" />
+          <input name="supervisorName" placeholder="Supervisor" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" />
+        </div>
+        <input name="supervisorPhone" placeholder="Supervisor Phone" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" />
+        
+        <div class="flex space-x-3 pt-4">
+          <button type="button" id="cancelModal" class="flex-1 p-3 rounded-xl bg-gray-100 font-semibold">Cancel</button>
+          <button type="submit" class="flex-1 p-3 rounded-xl bg-blue-600 text-white font-semibold">Save Entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="loginModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 items-center justify-center p-6">
+    <div class="bg-white rounded-2xl w-full max-w-xs p-6 shadow-2xl">
+      <h3 class="text-lg font-bold mb-4">Admin Login</h3>
+      <form id="loginForm" class="space-y-3">
+        <input id="email" type="email" placeholder="Email" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" required />
+        <input id="password" type="password" placeholder="Password" class="p-3 bg-gray-50 border rounded-xl w-full text-sm" required />
+        <div class="flex space-x-2 pt-2">
+          <button type="button" id="cancelLogin" class="flex-1 p-2 rounded-lg bg-gray-100 text-sm">Back</button>
+          <button type="submit" class="flex-1 p-2 rounded-lg bg-blue-600 text-white text-sm">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
   <script>
-    // ----------------- FIREBASE CONFIG -----------------
+    // --- Config & Init ---
     const firebaseConfig = {
-    apiKey: "AIzaSyBXFHsKTI_PRWL6_pS-DvpKOpq-yIb5wWY",
+     apiKey: "AIzaSyBXFHsKTI_PRWL6_pS-DvpKOpq-yIb5wWY",
   authDomain: "studio-9092233210-12a76.firebaseapp.com",
   databaseURL: "https://studio-9092233210-12a76-default-rtdb.firebaseio.com",
   projectId: "studio-9092233210-12a76",
@@ -233,199 +192,160 @@
   messagingSenderId: "398147415153",
   appId: "1:398147415153:web:8fe4318dbc789e03bd7fd0"
     };
-    const ADMIN_EMAIL = "mr.vishnu4312@gmail.com"; // <-- Replace with your real admin email
-
+    const ADMIN_EMAIL = "mr.vishnu4312@gmail.com";
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // ----------------- SECURITY RULE INSTRUCTIONS -----------------
-    /*
-    In Firebase Console → Realtime Database → Rules, use:
-    {
-      "rules": {
-        "shifts": {
-          ".read": true,
-          ".write": "auth != null && auth.token.email == 'bajajadmin@gmail.com'"
-        },
-        ".read": true,
-        ".write": false
-      }
-    }
-    ⚠️ This allows only your admin account to modify data. Everyone else can read.
-    */
-
-    // ----------------- APP LOGIC -----------------
+    // --- Selectors ---
     const shiftButtons = document.querySelectorAll('.shiftBtn');
     const shiftTitle = document.getElementById('shiftTitle');
     const addEntryBtn = document.getElementById('addEntryBtn');
-    const entriesTable = document.getElementById('entriesTable');
     const entriesBody = document.getElementById('entriesBody');
     const emptyMsg = document.getElementById('emptyMsg');
     const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modalTitle');
     const entryForm = document.getElementById('entryForm');
-    const cancelModal = document.getElementById('cancelModal');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const loginModal = document.getElementById('loginModal');
-    const cancelLogin = document.getElementById('cancelLogin');
-    const loginForm = document.getElementById('loginForm');
-    const adminBadge = document.getElementById('adminBadge');
     const supervisorArea = document.getElementById('supervisorArea');
-    const supervisorText = document.getElementById('supervisorText');
-    const supervisorCall = document.getElementById('supervisorCall');
 
     let currentShift = null;
     let currentEntries = {};
     let editingId = null;
 
+    function isAdmin() { return auth.currentUser && auth.currentUser.email.toLowerCase() === ADMIN_EMAIL.toLowerCase(); }
     function telLink(phone) { return phone ? 'tel:' + phone.replace(/\s+/g, '') : '#'; }
-    function isAdmin() { const user = auth.currentUser; return user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase(); }
 
-    // ----------------- SHIFT SELECTION -----------------
-  shiftButtons.forEach(btn => btn.addEventListener('click', () => {
-
-  // Remove active + blur from all
-   shiftButtons.forEach(b => {
-      b.classList.remove('activeShift');
-      b.classList.remove('blurOther');
-      b.classList.remove(
-        'shift-sunday1','shift-sunday2','shift-sunday3',
-        'shift-nextweek1','shift-nextweek2','shift-nextweek3',
-        'shift-ot','shift-vendor'
-      );
-  });
-
-  // Add active class
-  btn.classList.add('activeShift');
-  btn.classList.add('shift-' + btn.dataset.shift);  // ← APPLY SPECIFIC COLOR
-
-  // Blur others
-  shiftButtons.forEach(b => {
-      if (b !== btn) b.classList.add('blurOther');
-  });
-
-  // Continue your existing code
-  const shift = btn.dataset.shift;
-  currentShift = shift;
-  shiftTitle.textContent = {
-    sunday1:'Sunday – 1st Shift', sunday2:'Sunday – 2nd Shift', sunday3:'Sunday – 3rd Shift',
-    nextweek1:'Next Week – 1st Shift', nextweek2:'Next Week – 2nd Shift', nextweek3:'Next Week – 3rd Shift',
-    ot:'OT (Overtime)', vendor:'Vendor Visit'
-  }[shift] || shift;
-
-  db.ref('shifts/' + shift + '/supervisor').on('value', snap => {
-    const sup = snap.val();
-    if(sup && (sup.name || sup.phone)) {
-      supervisorArea.classList.remove('hidden');
-      supervisorText.textContent = (sup.name||'') + (sup.phone ? ' • '+sup.phone:'' );
-      supervisorCall.href = telLink(sup.phone||'');
-    } else supervisorArea.classList.add('hidden');
-  });
-
-  db.ref('shifts/' + shift + '/entries').on('value', snap => {
-    const data = snap.val() || {};
-    currentEntries = data;
-    renderEntriesTable(data);
-  });
-
-  entriesTable.classList.remove('hidden');
-  emptyMsg.classList.add('hidden');
-}));
-
-    function renderEntriesTable(data){
+    // --- Render Logic (Optimized for Mobile Cards) ---
+    function renderEntriesCards(data) {
       entriesBody.innerHTML = '';
-      const keys = Object.keys(data||{});
-      if(!keys.length){ entriesTable.classList.add('hidden'); emptyMsg.classList.remove('hidden'); return; }
-      entriesTable.classList.remove('hidden'); emptyMsg.classList.add('hidden');
+      const keys = Object.keys(data || {});
+      if (!keys.length) { emptyMsg.classList.remove('hidden'); return; }
+      emptyMsg.classList.add('hidden');
 
-      keys.sort((a,b)=>((Number(data[a].routeNo)||0) - (Number(data[b].routeNo)||0))).forEach(id=>{
+      keys.sort((a,b)=>((Number(data[a].routeNo)||0) - (Number(data[b].routeNo)||0))).forEach(id => {
         const e = data[id];
-        const tr = document.createElement('tr');
-        tr.className = 'border-b';
-        tr.innerHTML = `
-          <td class="px-2 py-2 align-top">${e.routeNo||''}</td>
-          <td class="px-2 py-2 align-top">${e.routeName||''}</td>
-          <td class="px-2 py-2 align-top">${(e.stops||[]).join('<br>')}</td>
-          <td class="px-2 py-2 align-top">${e.driverName||''}</td>
-          <td class="px-2 py-2 align-top"><a href="${telLink(e.driverPhone||'')}" class="px-2 py-1 inline-block rounded bg-green-600 text-white text-xs">Call</a></td>
-          <td class="px-2 py-2 align-top">${e.date||''}</td>
-          <td class="px-2 py-2 align-top">${isAdmin()?`<button data-id="${id}" class="editBtn px-2 py-1 rounded bg-yellow-400 text-xs mr-1">Edit</button><button data-id="${id}" class="delBtn px-2 py-1 rounded bg-red-500 text-xs text-white">Delete</button>`:'<span class="text-xs text-gray-500">—</span>'}</td>
+        const card = document.createElement('div');
+        card.className = 'entry-card';
+        card.innerHTML = `
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">ROUTE ${e.routeNo || '??'}</span>
+              <h3 class="text-lg font-bold text-gray-800 mt-1">${e.routeName || 'No Name'}</h3>
+            </div>
+            <a href="${telLink(e.driverPhone)}" class="bg-green-500 text-white p-3 rounded-full shadow-lg active:scale-90 transition-transform">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+               </svg>
+            </a>
+          </div>
+          <div class="text-xs text-gray-500 mb-3 space-y-1">
+            <p class="flex items-center"><span class="w-16 font-semibold">Driver:</span> ${e.driverName || 'N/A'}</p>
+            <p class="flex items-start"><span class="w-16 font-semibold">Stops:</span> <span class="flex-1">${(e.stops || []).join(', ')}</span></p>
+          </div>
+          <div class="flex justify-between items-center pt-3 border-t border-gray-50">
+            <span class="text-[10px] text-gray-400 font-medium italic">Update: ${e.date || '---'}</span>
+            ${isAdmin() ? `
+              <div class="flex space-x-2">
+                <button data-id="${id}" class="editBtn text-xs font-bold text-blue-600 px-3 py-1 bg-blue-50 rounded-lg">Edit</button>
+                <button data-id="${id}" class="delBtn text-xs font-bold text-red-600 px-3 py-1 bg-red-50 rounded-lg">Delete</button>
+              </div>
+            ` : ''}
+          </div>
         `;
-        entriesBody.appendChild(tr);
+        entriesBody.appendChild(card);
       });
 
-      document.querySelectorAll('.editBtn').forEach(b=>b.addEventListener('click',()=>openEdit(b.dataset.id)));
-      document.querySelectorAll('.delBtn').forEach(b=>b.addEventListener('click',()=>deleteEntry(b.dataset.id)));
+      document.querySelectorAll('.editBtn').forEach(b => b.addEventListener('click', () => openEdit(b.dataset.id)));
+      document.querySelectorAll('.delBtn').forEach(b => b.addEventListener('click', () => deleteEntry(b.dataset.id)));
     }
 
-    function openEdit(id){
-      const e = currentEntries[id]||{};
+    // --- Core Logic ---
+    shiftButtons.forEach(btn => btn.addEventListener('click', () => {
+      shiftButtons.forEach(b => { b.classList.remove('activeShift'); b.classList.add('blurOther'); });
+      btn.classList.add('activeShift');
+      btn.classList.remove('blurOther');
+
+      const shift = btn.dataset.shift;
+      currentShift = shift;
+      shiftTitle.textContent = btn.textContent;
+
+      db.ref('shifts/' + shift + '/supervisor').on('value', snap => {
+        const sup = snap.val();
+        if(sup && (sup.name || sup.phone)) {
+          supervisorArea.classList.remove('hidden');
+          document.getElementById('supervisorText').textContent = sup.name || 'Supervisor';
+          document.getElementById('supervisorCall').href = telLink(sup.phone);
+        } else supervisorArea.classList.add('hidden');
+      });
+
+      db.ref('shifts/' + shift + '/entries').on('value', snap => {
+        currentEntries = snap.val() || {};
+        renderEntriesCards(currentEntries);
+      });
+    }));
+
+    function openEdit(id) {
+      const e = currentEntries[id] || {};
       editingId = id;
-      modalTitle.textContent='Edit Entry';
-      entryForm.routeNo.value=e.routeNo||'';
-      entryForm.routeName.value=e.routeName||'';
-      entryForm.stops.value=(e.stops||[]).join(', ');
-      entryForm.driverName.value=e.driverName||'';
-      entryForm.driverPhone.value=e.driverPhone||'';
-      entryForm.date.value=e.date||'';
-      modal.classList.remove('hidden'); modal.style.display='flex';
+      document.getElementById('modalTitle').textContent = 'Edit Entry';
+      entryForm.routeNo.value = e.routeNo || '';
+      entryForm.routeName.value = e.routeName || '';
+      entryForm.stops.value = (e.stops || []).join(', ');
+      entryForm.driverName.value = e.driverName || '';
+      entryForm.driverPhone.value = e.driverPhone || '';
+      entryForm.date.value = e.date || '';
+      modal.classList.add('modal-active');
     }
 
-    function deleteEntry(id){
+    function deleteEntry(id) {
       if(confirm('Delete this entry?')) db.ref('shifts/'+currentShift+'/entries/'+id).remove();
     }
 
-    addEntryBtn.addEventListener('click',()=>{ editingId=null; modalTitle.textContent='Add Entry'; entryForm.reset(); modal.classList.remove('hidden'); modal.style.display='flex'; });
-    cancelModal.addEventListener('click',()=>{ modal.classList.add('hidden'); modal.style.display='none'; });
+    // --- Modal Controls ---
+    addEntryBtn.addEventListener('click', () => { editingId = null; document.getElementById('modalTitle').textContent = 'New Entry'; entryForm.reset(); modal.classList.add('modal-active'); });
+    document.getElementById('cancelModal').addEventListener('click', () => modal.classList.remove('modal-active'));
 
-    entryForm.addEventListener('submit',e=>{
-      e.preventDefault(); if(!currentShift) return alert('Select a shift first');
+    entryForm.addEventListener('submit', e => {
+      e.preventDefault();
       const fd = new FormData(entryForm);
       const obj = {
-        routeNo: fd.get('routeNo')||'',
-        routeName: fd.get('routeName')||'',
-        stops: (fd.get('stops')||'').split(',').map(s=>s.trim()).filter(Boolean),
-        driverName: fd.get('driverName')||'',
-        driverPhone: fd.get('driverPhone')||'',
-        date: fd.get('date')||''
+        routeNo: fd.get('routeNo'),
+        routeName: fd.get('routeName'),
+        stops: fd.get('stops').split(',').map(s => s.trim()).filter(Boolean),
+        driverName: fd.get('driverName'),
+        driverPhone: fd.get('driverPhone'),
+        date: fd.get('date')
       };
-      const supName = fd.get('supervisorName')||'';
-      const supPhone = fd.get('supervisorPhone')||'';
       const updates = {};
-      if(supName || supPhone) updates['shifts/'+currentShift+'/supervisor']={name:supName,phone:supPhone};
-      if(editingId) updates['shifts/'+currentShift+'/entries/'+editingId]=obj;
-      else { const newKey=db.ref().child('shifts').push().key; updates['shifts/'+currentShift+'/entries/'+newKey]=obj; }
-      db.ref().update(updates).then(()=>{ modal.classList.add('hidden'); modal.style.display='none'; }).catch(err=>alert('Save failed: '+err.message));
+      if(fd.get('supervisorName')) updates['shifts/'+currentShift+'/supervisor'] = { name: fd.get('supervisorName'), phone: fd.get('supervisorPhone') };
+      if(editingId) updates['shifts/'+currentShift+'/entries/'+editingId] = obj;
+      else updates['shifts/'+currentShift+'/entries/' + db.ref().push().key] = obj;
+
+      db.ref().update(updates).then(() => modal.classList.remove('modal-active')).catch(alert);
     });
 
-    loginBtn.addEventListener('click',()=>{ loginModal.classList.remove('hidden'); loginModal.style.display='flex'; });
-    cancelLogin.addEventListener('click',()=>{ loginModal.classList.add('hidden'); loginModal.style.display='none'; });
+    // --- Auth Logic ---
+    document.getElementById('loginBtn').addEventListener('click', () => document.getElementById('loginModal').classList.add('modal-active'));
+    document.getElementById('cancelLogin').addEventListener('click', () => document.getElementById('loginModal').classList.remove('modal-active'));
+    document.getElementById('logoutBtn').addEventListener('click', () => auth.signOut());
 
-    loginForm.addEventListener('submit',e=>{
+    document.getElementById('loginForm').addEventListener('submit', e => {
       e.preventDefault();
-      const email=document.getElementById('email').value;
-      const password=document.getElementById('password').value;
-      auth.signInWithEmailAndPassword(email,password).then(()=>{ loginModal.classList.add('hidden'); loginModal.style.display='none'; }).catch(err=>alert('Login failed: '+err.message));
+      auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
+        .then(() => document.getElementById('loginModal').classList.remove('modal-active'))
+        .catch(err => alert(err.message));
     });
 
-    logoutBtn.addEventListener('click',()=>{ auth.signOut(); });
-
-    auth.onAuthStateChanged(user=>{
-      if(user && isAdmin()){ adminBadge.classList.remove('hidden'); addEntryBtn.classList.remove('hidden'); loginBtn.classList.add('hidden'); logoutBtn.classList.remove('hidden'); }
-      else{ adminBadge.classList.add('hidden'); addEntryBtn.classList.add('hidden'); loginBtn.classList.remove('hidden'); logoutBtn.classList.add('hidden'); }
+    auth.onAuthStateChanged(user => {
+      const isAdm = user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+      document.getElementById('adminBadge').classList.toggle('hidden', !isAdm);
+      addEntryBtn.classList.toggle('hidden', !isAdm);
+      document.getElementById('loginBtn').classList.toggle('hidden', !!user);
+      document.getElementById('logoutBtn').classList.toggle('hidden', !user);
+      if(currentEntries) renderEntriesCards(currentEntries);
     });
 
-    // Auto-select first shift
-    (function(){ const first = document.querySelector('.shiftBtn'); if(first) first.click(); })();
-    
+    // Default init
+    window.onload = () => { document.querySelector('.shiftBtn').click(); };
   </script>
-
-  
-  
 </body>
-
 </html>
-
-
